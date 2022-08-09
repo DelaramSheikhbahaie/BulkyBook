@@ -27,7 +27,7 @@ namespace BulkyBookWeb.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Category obj)
         {
-            if(obj.Name == obj.DisplayOrder.ToString())
+            if (obj.Name == obj.DisplayOrder.ToString())
             {
                 ModelState.AddModelError("name", " Name and DO cannot be the same");
             }
@@ -40,5 +40,43 @@ namespace BulkyBookWeb.Controllers
             }
             return View(obj);
         }
+        //GET
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var categoryFromDb = _db.categories.Find(id);
+            //var categoryFromDbFirst = _db.categories.FirstOrDefault(u=>u.Id==id);
+            //var categoryFromDbSingle = _db.categories.SingleOrDefault(u => u.Id == id);
+
+            if (categoryFromDb == null)
+            {
+                return NotFound();
+            }
+
+            return View(categoryFromDb);
+        }
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Category obj)
+        {
+            if (obj.Name == obj.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("name", " Name and DO cannot be the same");
+            }
+            if (ModelState.IsValid)
+            {
+                _db.categories.Update(obj);
+                _db.SaveChanges();
+                return RedirectToAction("index");
+
+            }
+            return View(obj);
+        }
     }
 }
+
+   
